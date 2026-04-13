@@ -1,4 +1,5 @@
 import { SplashScreen } from './scenes/SplashScreen.js';
+import { MainMenu } from './scenes/MainMenu.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -11,7 +12,8 @@ const config = {
     pixelArt: false,
     scene: 
     [
-        SplashScreen
+        SplashScreen,
+        MainMenu
     ],
     scale: {
         mode: Phaser.Scale.FIT,
