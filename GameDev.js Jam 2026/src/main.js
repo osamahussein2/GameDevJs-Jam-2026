@@ -1,5 +1,7 @@
 import { SplashScreen } from './scenes/SplashScreen.js';
 import { MainMenu } from './scenes/MainMenu.js';
+import { CreditsMenu } from './scenes/CreditsMenu.js';
+import { ControlsMenu } from './scenes/ControlsMenu.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -13,7 +15,9 @@ const config = {
     scene: 
     [
         SplashScreen,
-        MainMenu
+        MainMenu,
+        CreditsMenu,
+        ControlsMenu
     ],
     scale: {
         mode: Phaser.Scale.FIT,

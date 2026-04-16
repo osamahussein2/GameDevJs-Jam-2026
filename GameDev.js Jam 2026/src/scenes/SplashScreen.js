@@ -28,7 +28,7 @@ export class SplashScreen extends Phaser.Scene
         {
             this.phaserImage.alpha -= this.sys.game.loop.delta / this.millisecondsToSeconds;
             
-            if (this.phaserImage.alpha <= -1.0)
+            if (this.phaserImage.alpha <= 0.0)
             {
                 this.scene.stop(this);
                 this.scene.start('MainMenu');
