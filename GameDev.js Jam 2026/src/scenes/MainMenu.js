@@ -38,12 +38,12 @@ export class MainMenu extends Phaser.Scene
 
         this.playButton.on('pointerover', () => 
         {
-            
+            //this.playButton.setTexture('');
         });
 
         this.playButton.on('pointerout', () => 
         {
-            
+            //this.playButton.setTexture('playButtonNormal');
         });
 
         this.playButton.on('pointerdown', () => 
@@ -62,12 +62,12 @@ export class MainMenu extends Phaser.Scene
 
         this.creditsButton.on('pointerover', () => 
         {
-            
+            //this.creditsButton.setTexture('');
         });
 
         this.creditsButton.on('pointerout', () => 
         {
-            
+            //this.creditsButton.setTexture('creditsButtonNormal');
         });
 
         this.creditsButton.on('pointerdown', () => 
@@ -86,12 +86,12 @@ export class MainMenu extends Phaser.Scene
 
         this.controlsButton.on('pointerover', () => 
         {
-            
+            //this.controlsButton.setTexture('');
         });
 
         this.controlsButton.on('pointerout', () => 
         {
-            
+            //this.controlsButton.setTexture('controlsButtonNormal');
         });
 
         this.controlsButton.on('pointerdown', () => 
@@ -110,12 +110,12 @@ export class MainMenu extends Phaser.Scene
 
         this.quitButton.on('pointerover', () => 
         {
-            
+            //this.quitButton.setTexture('');
         });
 
         this.quitButton.on('pointerout', () => 
         {
-            
+            //this.quitButton.setTexture('quitButtonNormal');
         });
 
         this.quitButton.on('pointerdown', () => 

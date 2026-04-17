@@ -16,9 +16,12 @@ export class SplashScreen extends Phaser.Scene
         this.phaserImage.alpha = 0.0;
         
         this.timeToFadeImage = 2.0; // in seconds
+        this.timeToGoToMainMenu = 1.0; // in seconds
+
         this.millisecondsToSeconds = 1000.0;
 
         this.shouldImageFade = false;
+        this.shouldGoToMainMenu = false;
     }
 
     update()
@@ -28,10 +31,13 @@ export class SplashScreen extends Phaser.Scene
         {
             this.phaserImage.alpha -= this.sys.game.loop.delta / this.millisecondsToSeconds;
             
-            if (this.phaserImage.alpha <= 0.0)
+            if (this.phaserImage.alpha <= 0.0 && !this.shouldGoToMainMenu)
             {
-                this.scene.stop(this);
-                this.scene.start('MainMenu');
+                this.shouldGoToMainMenu = true;
+
+                // Call the on go to main menu callback function once the image fully disappears
+                this.sceneTimer = this.time.delayedCall(this.timeToGoToMainMenu * this.millisecondsToSeconds, 
+                    this.onGoToMainMenu, [], this);
             }
         }
 
@@ -54,5 +60,14 @@ export class SplashScreen extends Phaser.Scene
     onStartImageFade()
     {
         if (!this.shouldImageFade) this.shouldImageFade = true;
+        if (this.sceneTimer != null) this.sceneTimer = null;
+    }
+
+    onGoToMainMenu()
+    {
+        this.scene.stop(this);
+        this.scene.start('MainMenu');
+
+        if (this.sceneTimer != null) this.sceneTimer = null;
     }
 }
