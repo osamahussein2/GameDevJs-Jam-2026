@@ -1,5 +1,7 @@
 export class Player extends Phaser.Physics.Arcade.Sprite
 {
+    isDamaged = false;
+
     constructor(scene, x, y)
     {
         super(scene, x, y, 'PlayerIdle');
@@ -30,7 +32,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.anims.create({
             key: 'damaged',
             frames: this.anims.generateFrameNumbers('PlayerDamaged', {start: 0, end: 3}),
-            frameRate: 10,
+            frameRate: 20,
             repeat: 0
         });
 
@@ -49,6 +51,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
         this.minYPoint = 50.0;
         this.maxYPoint = 650.0;
+
+        if (this.playerDamaged) this.playerDamaged = false;
     }
 
     moveLeft(game)
@@ -87,6 +91,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (this.anims.key != 'walk') this.anims.play('walk', true);
+    }
+
+    animatePlayerDamage()
+    {
+        if (this.anims.key != 'damaged') this.anims.play('damaged', true);
+        else if (this.anims.key == 'damaged' && this.isDamaged)
+        {
+            this.isDamaged = false;
+        }
     }
 
     idle()

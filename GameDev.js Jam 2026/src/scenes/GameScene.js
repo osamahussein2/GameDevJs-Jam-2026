@@ -1,4 +1,5 @@
 import {Player} from '../gameobjects/Player.js'
+import {Skeleton} from '../gameobjects/Skeleton.js'
 
 export class GameScene extends Phaser.Scene 
 {
@@ -28,6 +29,16 @@ export class GameScene extends Phaser.Scene
         
         // Load keyboard input images
         this.load.image('EKeyImage', 'art/KeyImages/EKey.png');
+
+        // Load enemy sprites
+        this.load.spritesheet('EnemyIdle', 'art/enemy/Skeleton_Default_Idle_Unarmed.png', 
+            { frameWidth: 64, frameHeight: 64 });
+        
+        this.load.spritesheet('EnemyRun', 'art/enemy/Skeleton_Default_Run_Unarmed.png', 
+            { frameWidth: 64, frameHeight: 64 });
+        
+        this.load.spritesheet('EnemyAttack', 'art/enemy/Skeleton_Default_Attack_Unarmed.png', 
+            { frameWidth: 64, frameHeight: 64 });
     }
 
     create()
@@ -56,6 +67,9 @@ export class GameScene extends Phaser.Scene
         this.healthBarFill = this.add.rectangle(200, 50, 300, 50, 0x00FF00);
 
         this.playerHealth = 100.0;
+
+        // Load enemy skeleton
+        this.skeletonEnemy = new Skeleton(this, 600, 200);
     }
 
     update()
@@ -64,33 +78,44 @@ export class GameScene extends Phaser.Scene
         if (this.playerHealth > 0.0 && this.playerHealth <= 100.0)
         {
             this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
-            this.playerHealth -= 0.016;
         }
 
-        // Movement input
-        if (this.aKey.isDown)
+        if (!this.isDamaged)
         {
-            this.player.moveLeft(this.sys.game);
+            // Movement input
+            if (this.aKey.isDown)
+            {
+                this.player.moveLeft(this.sys.game);
+            }
+
+            if (this.dKey.isDown)
+            {
+                this.player.moveRight(this.sys.game);
+            }
+
+            if (this.wKey.isDown)
+            {
+                this.player.moveUp(this.sys.game);
+            }
+
+            if (this.sKey.isDown)
+            {
+                this.player.moveDown(this.sys.game);
+            }
+
+            else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp)
+            {
+                this.player.idle();
+            }
         }
 
-        if (this.dKey.isDown)
+        // Play player hit damage animation
+        if (this.skeletonEnemy.IsWithinAttackingRange(this.player) && !this.player.isDamaged)
         {
-            this.player.moveRight(this.sys.game);
-        }
+            this.player.animatePlayerDamage();
 
-        if (this.wKey.isDown)
-        {
-            this.player.moveUp(this.sys.game);
-        }
-
-        if (this.sKey.isDown)
-        {
-            this.player.moveDown(this.sys.game);
-        }
-
-        else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp)
-        {
-            this.player.idle();
+            this.playerHealth -= 2.0;
+            this.player.isDamaged = true;
         }
 
         if (this.playerInsideOfHealthVendingMachine())
@@ -130,12 +155,11 @@ export class GameScene extends Phaser.Scene
             }
         }
 
-        this.player.preventPlayerFromMovingOffscreen();
-    }
+        // Move the enemy towards the player
+        this.skeletonEnemy.moveToPlayer(this.player, this.sys.game);
 
-    initializeBackButton(x, y)
-    {
-        
+        // Prevent the player from being able to move offscreen
+        this.player.preventPlayerFromMovingOffscreen();
     }
 
     playerInsideOfHealthVendingMachine()
