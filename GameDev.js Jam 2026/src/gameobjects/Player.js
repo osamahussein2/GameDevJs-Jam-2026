@@ -6,10 +6,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
         scene.add.existing(this);
 
-        this.initAnimations();
+        this.setScale(2, 2);
+
+        this.initializePlayer();
     }
 
-    initAnimations()
+    initializePlayer()
     {
         this.anims.create({
             key: 'idle',
@@ -25,37 +27,80 @@ export class Player extends Phaser.Physics.Arcade.Sprite
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'damaged',
+            frames: this.anims.generateFrameNumbers('PlayerDamaged', {start: 0, end: 3}),
+            frameRate: 10,
+            repeat: 0
+        });
+
         this.anims.play('idle', true);
 
         this.playerX = 0.0;
-        this.playerSpeed = 5.0;
+        this.playerY = 0.0;
+
+        this.playerSpeed = 100.0;
+
+        this.playerPosX = this.getWorldPoint().x;
+        this.playerPosY = this.getWorldPoint().y;
+
+        this.minLeftPoint = 30.0;
+        this.maxRightPoint = 1170.0;
+
+        this.minYPoint = 50.0;
+        this.maxYPoint = 650.0;
     }
 
     moveLeft(game)
     {
-        this.playerX -= this.playerSpeed * (game.loop.delta / 1000.0);
+        if (this.getWorldPoint().x > this.minLeftPoint) this.playerX -= this.playerSpeed * (game.loop.delta / 1000.0);
 
-        this.setPosition(this.getWorldPoint().x + this.playerX, this.getWorldPoint().y);
+        this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (!this.flipX) this.flipX = true;
-        this.anims.play('walk', true);
+        if (this.anims.key != 'walk') this.anims.play('walk', true);
     }
 
     moveRight(game)
     {
-        this.playerX += this.playerSpeed * (game.loop.delta / 1000.0);
+        if (this.getWorldPoint().x < 1170.0) this.playerX += this.playerSpeed * (game.loop.delta / 1000.0);
 
-        this.setPosition(this.getWorldPoint().x + this.playerX, this.getWorldPoint().y);
+        this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (this.flipX) this.flipX = false;
-        this.anims.play('walk', true);
+        if (this.anims.key != 'walk') this.anims.play('walk', true);
+    }
+
+    moveUp(game)
+    {
+        if (this.getWorldPoint().y > this.minYPoint) this.playerY -= this.playerSpeed * (game.loop.delta / 1000.0);
+
+        this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
+
+        if (this.anims.key != 'walk') this.anims.play('walk', true);
+    }
+
+    moveDown(game)
+    {
+        if (this.getWorldPoint().y < this.maxYPoint) this.playerY += this.playerSpeed * (game.loop.delta / 1000.0);
+
+        this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
+
+        if (this.anims.key != 'walk') this.anims.play('walk', true);
     }
 
     idle()
     {
-        if (this.playerX != 0.0) this.playerX = 0.0;
-
         if (this.flipX) this.flipX = false;
-        this.anims.play('idle', true);
+        if (this.anims.key != 'idle') this.anims.play('idle', true);
+    }
+
+    preventPlayerFromMovingOffscreen()
+    {
+        if (this.getWorldPoint().x < this.minLeftPoint) this.setPosition(this.minLeftPoint, this.getWorldPoint().y);
+        else if (this.getWorldPoint().x > this.minRightPoint) this.setPosition(this.minRightPoint, this.getWorldPoint().y);
+        
+        else if (this.getWorldPoint().y < this.minYPoint) this.setPosition(this.getWorldPoint().x, this.minYPoint);
+        else if (this.getWorldPoint().y > this.maxYPoint) this.setPosition(this.getWorldPoint().x, this.maxYPoint);
     }
 }
