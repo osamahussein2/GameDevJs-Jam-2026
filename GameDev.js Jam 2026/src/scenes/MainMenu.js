@@ -38,18 +38,18 @@ export class MainMenu extends Phaser.Scene
 
         this.playButton.on('pointerover', () => 
         {
-            //this.playButton.setTexture('');
+            this.playButton.setTint(0xffff00);
         });
 
         this.playButton.on('pointerout', () => 
         {
-            //this.playButton.setTexture('playButtonNormal');
+            this.playButton.setTint(0xfffffff);
         });
 
         this.playButton.on('pointerdown', () => 
         {
-            //this.scene.stop(this);
-            //this.scene.start('GameScene');
+            this.scene.stop(this);
+            this.scene.start('GameScene');
         });
     }
 
