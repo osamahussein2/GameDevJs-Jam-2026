@@ -102,6 +102,11 @@ export class GameScene extends Phaser.Scene
 
         this.enemiesSpawned = 0;
         this.maxEnemiesToSpawn = 100;
+
+        // Score
+        this.score = 0;
+
+        this.scoreText = this.add.text(50, 100, 'Score: ' + this.score, { fontSize: '32px', fill: '#FFFFFF' });
     }
 
     update()
@@ -338,7 +343,20 @@ export class GameScene extends Phaser.Scene
 
                 if (this.movingEntityInsideOfFire(enemy))
                 {
-                    enemy.damageSkeleton(1.0, this.enemiesSpawned);
+                    enemy.damageSkeleton(1.0);                    
+                }
+
+                // If enemy's health reaches 0, decrement enemies spawned and increment the score
+                if (enemy.getHealth() <= 0.0)
+                {
+                    this.enemiesSpawned--;
+                    this.score++;
+
+                    this.scoreText.setText('Score: ' + this.score);
+
+                    enemy.destroy(); // Also destroy this enemy and remove it from the enemies array
+
+                    Phaser.Utils.Array.Remove(this.enemies, enemy);
                 }
             }
         }
