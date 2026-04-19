@@ -112,6 +112,11 @@ export class GameScene extends Phaser.Scene
         this.scoreText = this.add.text(50, 100, 'Score: ' + this.score, { fontSize: '32px', fill: '#FFFFFF' });
 
         this.isGamePaused = false;
+
+        // Vending machine cooldown time
+        this.vendingMachineCooldownTime = 30.0;
+
+        this.vendingMachineTimer = this.vendingMachineCooldownTime;
     }
 
     update()
@@ -136,6 +141,12 @@ export class GameScene extends Phaser.Scene
         {
             if (!this.isGamePaused)
             {
+                // Increment vending machine timer so the player can use it to heal their health
+                if (this.vendingMachineTimer <= this.vendingMachineCooldownTime) 
+                {
+                    this.vendingMachineTimer += this.sys.game.loop.delta / 1000.0;
+                }
+
                 this.player.resumeAnimations();
 
                 // Pause game input
@@ -212,7 +223,8 @@ export class GameScene extends Phaser.Scene
             {
                 //console.log('Collided with health vending machine');
 
-                if (this.healthVendingMachine.tint != 0xFF0000)
+                if (this.healthVendingMachine.tint != 0xFF0000 && 
+                    this.vendingMachineTimer >= this.vendingMachineCooldownTime)
                 {
                     this.eKeyImage = this.add.image(400, 200, 'EKeyImage');
                     this.eKeyImage.setScale(0.05, 0.05);
@@ -220,12 +232,23 @@ export class GameScene extends Phaser.Scene
                     this.healthVendingMachine.setTint(0xFF0000);
                 }
 
-                if (this.eKey.isDown && this.playerHealth < 100.0)
+                if (this.eKey.isDown && this.playerHealth < 100.0 && this.eKeyImage != null)
                 {
-                    this.playerHealth = 100.0;
+                    // Set vending machine back to white
+                    if (this.healthVendingMachine.tint != 0xFFFFFF)
+                    {
+                        this.eKeyImage.destroy();
+                        this.eKeyImage = null;
+
+                        this.healthVendingMachine.setTint(0xFFFFFF);
+                    }
+
+                    this.playerHealth = 100.0; // Reset to player's max health
 
                     // Update health bar width to reflect health change
                     this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
+
+                    this.vendingMachineTimer = 0.0; // Reset vending machine timer to 0
                 }
             }
 
