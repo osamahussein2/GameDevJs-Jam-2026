@@ -305,7 +305,7 @@ export class GameScene extends Phaser.Scene
         if (this.enemies.length > 0) this.enemies.pop();
 
         this.scene.stop(this);
-        this.scene.start('GameOverMenu');
+        this.scene.start('GameOverMenu', { score: this.score });
     }
 
     spawnEnemies()

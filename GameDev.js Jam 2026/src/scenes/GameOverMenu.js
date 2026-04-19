@@ -11,6 +11,11 @@ export class GameOverMenu extends Phaser.Scene
         this.load.setPath('assets');
     }
 
+    init(data)
+    {
+        this.score = data.score;
+    }
+
     create()
     {
         this.gameWidth = this.sys.game.canvas.width;
@@ -29,6 +34,12 @@ export class GameOverMenu extends Phaser.Scene
             'Press ENTER to go back to main menu!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
         
         this.enterText.setOrigin(0.5, 0.5);
+
+        // Score
+        this.scoreText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 2.0, 'Score: ' + this.score, 
+            { fontSize: '40px', fill: '#FFFFFF' });
+
+        this.scoreText.setOrigin(0.5, 0.5);
     }
 
     update()
