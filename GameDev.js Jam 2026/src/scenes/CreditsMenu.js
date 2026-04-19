@@ -103,12 +103,12 @@ export class CreditsMenu extends Phaser.Scene
 
         this.backButton.on('pointerover', () => 
         {
-            //this.backButton.setTexture('');
+            this.backButton.setTint(0xffff00);
         });
 
         this.backButton.on('pointerout', () => 
         {
-            //this.backButton.setTexture('backButtonNormal');
+            this.backButton.setTint(0xfffffff);
         });
 
         this.backButton.on('pointerdown', () => 
