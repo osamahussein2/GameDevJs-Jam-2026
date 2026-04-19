@@ -94,6 +94,8 @@ export class GameScene extends Phaser.Scene
 
         // Used to reset player damage value once the callback function is called
         this.timeToResetPlayerDamage = 0.5;
+
+        this.timeToShowGameOver = 2.0;
     }
 
     update()
@@ -108,6 +110,10 @@ export class GameScene extends Phaser.Scene
             
             // Set player to dead once their health reaches 0 and trigger death animation
             this.player.setPlayerToDead();
+
+            // Call the show game over callback function
+            this.gameOverTimer = this.time.delayedCall(this.timeToShowGameOver * 1000.0, 
+                this.onShowGameOver, [], this);
         }
 
         if (!this.player.getIsDead()) // If player isn't dead
@@ -279,5 +285,13 @@ export class GameScene extends Phaser.Scene
     onResetPlayerDamaged()
     {
         this.damageTimer = null;
+    }
+
+    onShowGameOver()
+    {
+        this.gameOverTimer = null;
+
+        this.scene.stop(this);
+        this.scene.start('GameOverMenu');
     }
 }

@@ -3,6 +3,7 @@ import { MainMenu } from './scenes/MainMenu.js';
 import { CreditsMenu } from './scenes/CreditsMenu.js';
 import { ControlsMenu } from './scenes/ControlsMenu.js';
 import { GameScene } from './scenes/GameScene.js';
+import { GameOverMenu } from './scenes/GameOverMenu.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -19,7 +20,8 @@ const config = {
         MainMenu,
         CreditsMenu,
         ControlsMenu,
-        GameScene
+        GameScene,
+        GameOverMenu
     ],
     scale: {
         mode: Phaser.Scale.FIT,
