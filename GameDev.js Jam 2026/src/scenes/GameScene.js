@@ -65,7 +65,7 @@ export class GameScene extends Phaser.Scene
 
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E); // Interact
 
-        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        this.pKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
         // Create background level
@@ -139,7 +139,7 @@ export class GameScene extends Phaser.Scene
                 this.player.resumeAnimations();
 
                 // Pause game input
-                if (Phaser.Input.Keyboard.JustDown(this.escapeKey))
+                if (Phaser.Input.Keyboard.JustDown(this.pKey))
                 {
                     this.initializePauseMenu();
                     this.isGamePaused = true;
@@ -197,7 +197,7 @@ export class GameScene extends Phaser.Scene
                     this.scene.start('MainMenu');
                 }
 
-                if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) // Press ESCAPE to resume
+                if (Phaser.Input.Keyboard.JustDown(this.pKey)) // Press P to resume
                 {
                     this.destroyPauseMenu();
                     this.isGamePaused = false;
@@ -451,16 +451,17 @@ export class GameScene extends Phaser.Scene
         
         this.pauseMenuText.setOrigin(0.5, 0.5);
         
-        // Enter text
-        this.escapeText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.2, 
-            'Press ESCAPE to resume!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
+        // P key text
+        this.pKeyText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.2, 
+            'Press P to resume!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
 
-        this.escapeText.setOrigin(0.5, 0.5);
+        this.pKeyText.setOrigin(0.5, 0.5);
         
-        this.enterText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.1, 
+        // Enter key text
+        this.enterKeyText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.1, 
             'Press ENTER to quit to main menu!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
         
-        this.enterText.setOrigin(0.5, 0.5);
+        this.enterKeyText.setOrigin(0.5, 0.5);
     }
 
     destroyPauseMenu()
@@ -472,16 +473,16 @@ export class GameScene extends Phaser.Scene
             this.pauseMenuText = null;
         }
 
-        if (this.escapeText != null)
+        if (this.pKeyText != null)
         {
-            this.escapeText.destroy();
-            this.escapeText = null;
+            this.pKeyText.destroy();
+            this.pKeyText = null;
         }
 
-        if (this.enterText != null)
+        if (this.enterKeyText != null)
         {
-            this.enterText.destroy();
-            this.enterText = null;
+            this.enterKeyText.destroy();
+            this.enterKeyText = null;
         }
 
         if (this.blackImage != null)
