@@ -193,4 +193,14 @@ export class Skeleton extends Phaser.Physics.Arcade.Sprite
     {
         return this.enemyHealth;
     }
+
+    pauseAnimations()
+    {
+        if (!this.anims.isPaused) this.anims.pause();
+    }
+
+    resumeAnimations()
+    {
+        if (this.anims.isPaused) this.anims.resume();
+    }
 }

@@ -133,4 +133,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite
     {
         return this.isDead && !this.anims.isPlaying();
     }
+
+    pauseAnimations()
+    {
+        if (!this.anims.isPaused) this.anims.pause();
+    }
+
+    resumeAnimations()
+    {
+        if (this.anims.isPaused) this.anims.resume();
+    }
 }

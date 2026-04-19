@@ -65,6 +65,9 @@ export class GameScene extends Phaser.Scene
 
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E); // Interact
 
+        this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
         // Create background level
         this.dungeonLevel = this.add.image(0.0, -695.0, 'Dungeon1');
         this.dungeonLevel.setOrigin(0.0, 0.0);
@@ -107,6 +110,8 @@ export class GameScene extends Phaser.Scene
         this.score = 0;
 
         this.scoreText = this.add.text(50, 100, 'Score: ' + this.score, { fontSize: '32px', fill: '#FFFFFF' });
+
+        this.isGamePaused = false;
     }
 
     update()
@@ -129,109 +134,142 @@ export class GameScene extends Phaser.Scene
 
         if (!this.player.getIsDead()) // If player isn't dead
         {
-            // Movement input
-            if (this.aKey.isDown)
+            if (!this.isGamePaused)
             {
-                this.player.moveLeft(this.sys.game, this.damageTimer);
+                this.player.resumeAnimations();
+
+                // Pause game input
+                if (Phaser.Input.Keyboard.JustDown(this.escapeKey))
+                {
+                    this.initializePauseMenu();
+                    this.isGamePaused = true;
+                }
+
+                // Movement input
+                if (this.aKey.isDown)
+                {
+                    this.player.moveLeft(this.sys.game, this.damageTimer);
+                }
+
+                if (this.dKey.isDown)
+                {
+                    this.player.moveRight(this.sys.game, this.damageTimer);
+                }
+
+                if (this.wKey.isDown)
+                {
+                    this.player.moveUp(this.sys.game, this.damageTimer);
+                }
+
+                if (this.sKey.isDown)
+                {
+                    this.player.moveDown(this.sys.game, this.damageTimer);
+                }
+
+                else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp)
+                {
+                    this.player.idle();
+                }
+
+                // If the player is inside the fire, damage them
+                if (this.movingEntityInsideOfFire(this.player) && this.damageTimer == null)
+                {
+                    this.player.animatePlayerDamage();
+
+                    // Call the reset player damage callback function to reset player damage value
+                    this.damageTimer = this.time.delayedCall(this.timeToResetPlayerDamage * 1000.0, 
+                        this.onResetPlayerDamaged, [], this);
+                    
+                    this.playerHealth -= 20.0;
+
+                    // Update health bar width to reflect health change
+                    this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
+                }
             }
 
-            if (this.dKey.isDown)
+            else
             {
-                this.player.moveRight(this.sys.game, this.damageTimer);
-            }
+                this.player.pauseAnimations();
 
-            if (this.wKey.isDown)
-            {
-                this.player.moveUp(this.sys.game, this.damageTimer);
-            }
+                if (this.enterKey.isDown) // Press ENTER to go to main menu
+                {
+                    this.scene.stop(this);
+                    this.scene.start('MainMenu');
+                }
 
-            if (this.sKey.isDown)
-            {
-                this.player.moveDown(this.sys.game, this.damageTimer);
-            }
-
-            else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp)
-            {
-                this.player.idle();
-            }
-
-            // If the player is inside the fire, damage them
-            if (this.movingEntityInsideOfFire(this.player) && this.damageTimer == null)
-            {
-                this.player.animatePlayerDamage();
-
-                // Call the reset player damage callback function to reset player damage value
-                this.damageTimer = this.time.delayedCall(this.timeToResetPlayerDamage * 1000.0, 
-                    this.onResetPlayerDamaged, [], this);
-                
-                this.playerHealth -= 20.0;
-
-                // Update health bar width to reflect health change
-                this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
+                if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) // Press ESCAPE to resume
+                {
+                    this.destroyPauseMenu();
+                    this.isGamePaused = false;
+                }
             }
         }
 
-        // Player inside of vending machine
-        if (this.playerInsideOfHealthVendingMachine())
+        if (!this.isGamePaused)
         {
-            //console.log('Collided with health vending machine');
-
-            if (this.healthVendingMachine.tint != 0xFF0000)
+            // Player inside of vending machine
+            if (this.playerInsideOfHealthVendingMachine())
             {
-                if (this.eKeyImage == null)
+                //console.log('Collided with health vending machine');
+
+                if (this.healthVendingMachine.tint != 0xFF0000)
                 {
                     this.eKeyImage = this.add.image(400, 200, 'EKeyImage');
                     this.eKeyImage.setScale(0.05, 0.05);
+
+                    this.healthVendingMachine.setTint(0xFF0000);
                 }
 
-                this.healthVendingMachine.setTint(0xFF0000);
-            }
-
-            if (this.eKey.isDown && this.playerHealth < 100.0)
-            {
-                //console.log('healed');
-
-                this.playerHealth = 100.0;
-
-                // Update health bar width to reflect health change
-                this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
-            }
-        }
-
-        // Else player left vending machine
-        else
-        {
-            if (this.healthVendingMachine.tint != 0xFFFFFF)
-            {
-                if (this.eKeyImage != null) 
+                if (this.eKey.isDown && this.playerHealth < 100.0)
                 {
-                    this.eKeyImage.destroy();
-                    this.eKeyImage = null;
+                    this.playerHealth = 100.0;
+
+                    // Update health bar width to reflect health change
+                    this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
                 }
-
-                this.healthVendingMachine.setTint(0xFFFFFF);
             }
+
+            // Else player left vending machine
+            else
+            {
+                if (this.healthVendingMachine.tint != 0xFFFFFF)
+                {
+                    if (this.eKeyImage != null) 
+                    {
+                        this.eKeyImage.destroy();
+                        this.eKeyImage = null;
+                    }
+
+                    this.healthVendingMachine.setTint(0xFFFFFF);
+                }
+            }
+
+            this.spawnTimer += this.sys.game.loop.delta / 1000.0;
+            
+            if (this.enemiesSpawned < this.maxEnemiesToSpawn && 
+                this.spawnTimer >= this.timeToSpawnEnemies) 
+            {
+                this.spawnEnemies();
+                this.spawnTimer = 0.0;
+
+                this.enemiesSpawned++;
+
+                if (this.enemiesSpawned == 5) this.timeToSpawnEnemies = 1.0;
+                else if (this.enemiesSpawned == 10) this.timeToSpawnEnemies = 0.5;
+            }
+
+            // Resume all animations and update enemies logic
+            this.resumeAllAnimations();
+            this.updateEnemies();
+
+            // Prevent the player from being able to move offscreen
+            this.player.preventPlayerFromMovingOffscreen();
         }
 
-        this.spawnTimer += this.sys.game.loop.delta / 1000.0;
-        //console.log(this.spawnTimer);
-        
-        if (this.enemiesSpawned < this.maxEnemiesToSpawn && 
-            this.spawnTimer >= this.timeToSpawnEnemies) 
+        else // If game is paused, pause all animations
         {
-            this.spawnEnemies();
-            this.spawnTimer = 0.0;
-
-            this.enemiesSpawned++;
-
-            if (this.enemiesSpawned == 5) this.timeToSpawnEnemies = 1.0;
-            else if (this.enemiesSpawned == 10) this.timeToSpawnEnemies = 0.5;
+            this.pauseAllAnimations();
         }
-
-        this.updateEnemies();
-
-        // Prevent the player from being able to move offscreen
-        this.player.preventPlayerFromMovingOffscreen();
     }
 
     playerInsideOfHealthVendingMachine()
@@ -293,6 +331,12 @@ export class GameScene extends Phaser.Scene
     {
         this.gameOverTimer = null;
 
+        if (this.eKeyImage != null) 
+        {
+            this.eKeyImage.destroy();
+            this.eKeyImage = null;
+        }
+
         for (this.enemy of this.enemies) 
         {
             if (this.enemy != null)
@@ -317,12 +361,22 @@ export class GameScene extends Phaser.Scene
         Phaser.Utils.Array.Add(this.enemies, new Skeleton(this, this.randomizedPositionX, this.randomizedPositionY));
     }
 
+    resumeAllAnimations()
+    {
+        this.fire1.resumeAnimations();
+        this.fire2.resumeAnimations();
+        this.fire3.resumeAnimations();
+        this.fire4.resumeAnimations();
+    }
+
     updateEnemies()
     {
         for (const enemy of this.enemies) 
         {
             if (enemy != null)
             {
+                enemy.resumeAnimations();
+
                 // Play player hit damage animation
                 if (enemy.IsWithinAttackingRange(this.player) && this.damageTimer == null)
                 {
@@ -359,6 +413,87 @@ export class GameScene extends Phaser.Scene
                     Phaser.Utils.Array.Remove(this.enemies, enemy);
                 }
             }
+        }
+    }
+
+    pauseAllAnimations()
+    {
+        for (const enemy of this.enemies) 
+        {
+            if (enemy != null)
+            {
+                enemy.pauseAnimations();
+            }
+        }
+
+        this.fire1.pauseAnimations();
+        this.fire2.pauseAnimations();
+        this.fire3.pauseAnimations();
+        this.fire4.pauseAnimations();
+    }
+
+    initializePauseMenu()
+    {
+        // Add a semi-transparent image as an overlay for pause menu
+        this.semiTransparentImage = this.add.rectangle(this.gameWidth / 2.0, this.gameHeight / 2.0, this.gameWidth, 
+            this.gameHeight, 0x000000, 0.5);
+        
+        this.semiTransparentImage.setOrigin(0.5, 0.5);
+
+        // Add a fully opaque black image as overlay for the texts (not including the pause menu title)
+        this.blackImage = this.add.rectangle(this.gameWidth / 2.0, this.gameHeight / 1.15, 500, 150, 0x000000);
+        
+        this.blackImage.setOrigin(0.5, 0.5);
+
+        // Pause Menu text
+        this.pauseMenuText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 10.0, 
+            'Pause Menu', { fontFamily: 'Arial', fontSize: 60, color: '#FFFFFF' });
+        
+        this.pauseMenuText.setOrigin(0.5, 0.5);
+        
+        // Enter text
+        this.escapeText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.2, 
+            'Press ESCAPE to resume!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
+
+        this.escapeText.setOrigin(0.5, 0.5);
+        
+        this.enterText = this.add.text(this.gameWidth / 2.0, this.gameHeight / 1.1, 
+            'Press ENTER to quit to main menu!', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
+        
+        this.enterText.setOrigin(0.5, 0.5);
+    }
+
+    destroyPauseMenu()
+    {
+        // Destroy every pause menu object
+        if (this.pauseMenuText != null)
+        {
+            this.pauseMenuText.destroy();
+            this.pauseMenuText = null;
+        }
+
+        if (this.escapeText != null)
+        {
+            this.escapeText.destroy();
+            this.escapeText = null;
+        }
+
+        if (this.enterText != null)
+        {
+            this.enterText.destroy();
+            this.enterText = null;
+        }
+
+        if (this.blackImage != null)
+        {
+            this.blackImage.destroy();
+            this.blackImage = null;
+        }
+
+        if (this.semiTransparentImage != null)
+        {
+            this.semiTransparentImage.destroy();
+            this.semiTransparentImage = null;
         }
     }
 }

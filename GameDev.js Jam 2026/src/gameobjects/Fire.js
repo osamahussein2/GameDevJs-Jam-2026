@@ -22,4 +22,14 @@ export class Fire extends Phaser.Physics.Arcade.Sprite
 
         this.anims.play('fire', true);
     }
+
+    pauseAnimations()
+    {
+        if (!this.anims.isPaused) this.anims.pause();
+    }
+
+    resumeAnimations()
+    {
+        if (this.anims.isPaused) this.anims.resume();
+    }
 }
