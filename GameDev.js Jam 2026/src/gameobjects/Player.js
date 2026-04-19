@@ -1,7 +1,5 @@
 export class Player extends Phaser.Physics.Arcade.Sprite
 {
-    isDamaged = false;
-
     constructor(scene, x, y)
     {
         super(scene, x, y, 'PlayerIdle');
@@ -36,6 +34,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite
             repeat: 0
         });
 
+        this.anims.create({
+            key: 'death',
+            frames: this.anims.generateFrameNumbers('PlayerDeath', {start: 0, end: 3}),
+            frameRate: 20,
+            repeat: 0
+        });
+
         this.anims.play('idle', true);
 
         this.playerX = 0.0;
@@ -52,54 +57,50 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.minYPoint = 50.0;
         this.maxYPoint = 650.0;
 
-        if (this.playerDamaged) this.playerDamaged = false;
+        this.isDead = false;
     }
 
-    moveLeft(game)
+    moveLeft(game, isDamaged)
     {
         if (this.getWorldPoint().x > this.minLeftPoint) this.playerX -= this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (!this.flipX) this.flipX = true;
-        if (this.anims.key != 'walk') this.anims.play('walk', true);
+        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
     }
 
-    moveRight(game)
+    moveRight(game, isDamaged)
     {
         if (this.getWorldPoint().x < 1170.0) this.playerX += this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (this.flipX) this.flipX = false;
-        if (this.anims.key != 'walk') this.anims.play('walk', true);
+        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
     }
 
-    moveUp(game)
+    moveUp(game, isDamaged)
     {
         if (this.getWorldPoint().y > this.minYPoint) this.playerY -= this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
-        if (this.anims.key != 'walk') this.anims.play('walk', true);
+        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
     }
 
-    moveDown(game)
+    moveDown(game, isDamaged)
     {
         if (this.getWorldPoint().y < this.maxYPoint) this.playerY += this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
-        if (this.anims.key != 'walk') this.anims.play('walk', true);
+        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
     }
 
     animatePlayerDamage()
     {
-        if (this.anims.key != 'damaged') this.anims.play('damaged', true);
-        else if (this.anims.key == 'damaged' && this.isDamaged)
-        {
-            this.isDamaged = false;
-        }
+        if (this.anims.key != 'damaged' && !this.isDead) this.anims.play('damaged', true);
     }
 
     idle()
@@ -115,5 +116,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         
         else if (this.getWorldPoint().y < this.minYPoint) this.setPosition(this.getWorldPoint().x, this.minYPoint);
         else if (this.getWorldPoint().y > this.maxYPoint) this.setPosition(this.getWorldPoint().x, this.maxYPoint);
+    }
+
+    getIsDead()
+    {
+        return this.isDead;
+    }
+
+    setPlayerToDead()
+    {
+        this.isDead = true;
+        if (this.anims.key != 'death') this.anims.play('death', true);
+    }
+
+    deathAnimationFinished()
+    {
+        return this.isDead && !this.anims.isPlaying();
     }
 }
