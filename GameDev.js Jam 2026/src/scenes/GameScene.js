@@ -89,13 +89,19 @@ export class GameScene extends Phaser.Scene
 
         this.playerHealth = 100.0;
 
-        // Load enemy skeleton
-        this.skeletonEnemy = new Skeleton(this, 600, 200);
+        this.spawnTimer = 0.0;
+        this.timeToSpawnEnemies = 2.0;
 
         // Used to reset player damage value once the callback function is called
         this.timeToResetPlayerDamage = 0.5;
 
         this.timeToShowGameOver = 2.0;
+
+        // Initialize empty array
+        this.enemies = [];
+
+        this.enemiesSpawned = 0;
+        this.maxEnemiesToSpawn = 100;
     }
 
     update()
@@ -202,31 +208,22 @@ export class GameScene extends Phaser.Scene
             }
         }
 
-        if (this.skeletonEnemy != null)
+        this.spawnTimer += this.sys.game.loop.delta / 1000.0;
+        //console.log(this.spawnTimer);
+        
+        if (this.enemiesSpawned < this.maxEnemiesToSpawn && 
+            this.spawnTimer >= this.timeToSpawnEnemies) 
         {
-            // Play player hit damage animation
-            if (this.skeletonEnemy.IsWithinAttackingRange(this.player) && this.damageTimer == null)
-            {
-                this.player.animatePlayerDamage();
+            this.spawnEnemies();
+            this.spawnTimer = 0.0;
 
-                // Call the reset player damage callback function to reset player damage value
-                this.damageTimer = this.time.delayedCall(this.timeToResetPlayerDamage * 1000.0, 
-                    this.onResetPlayerDamaged, [], this);
+            this.enemiesSpawned++;
 
-                this.playerHealth -= 2.0;
-
-                // Update health bar width to reflect health change
-                this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
-            }
-            
-            // Move the enemy towards the player
-            this.skeletonEnemy.moveToPlayer(this.player, this.sys.game);
-
-            if (this.movingEntityInsideOfFire(this.skeletonEnemy))
-            {
-                this.skeletonEnemy.damageSkeleton(1.0);
-            }
+            if (this.enemiesSpawned == 5) this.timeToSpawnEnemies = 1.0;
+            else if (this.enemiesSpawned == 10) this.timeToSpawnEnemies = 0.5;
         }
+
+        this.updateEnemies();
 
         // Prevent the player from being able to move offscreen
         this.player.preventPlayerFromMovingOffscreen();
@@ -291,7 +288,59 @@ export class GameScene extends Phaser.Scene
     {
         this.gameOverTimer = null;
 
+        for (this.enemy of this.enemies) 
+        {
+            if (this.enemy != null)
+            {
+                this.enemy.destroy();
+                this.enemy = null;
+            }
+        }
+
+        if (this.enemies.length > 0) this.enemies.pop();
+
         this.scene.stop(this);
         this.scene.start('GameOverMenu');
+    }
+
+    spawnEnemies()
+    {
+        this.randomizedPositionX = Phaser.Math.FloatBetween(150, 1000);
+        this.randomizedPositionY = Phaser.Math.FloatBetween(100, 600);
+        
+        // Add the skeleton enemy to the enemies array
+        Phaser.Utils.Array.Add(this.enemies, new Skeleton(this, this.randomizedPositionX, this.randomizedPositionY));
+    }
+
+    updateEnemies()
+    {
+        for (const enemy of this.enemies) 
+        {
+            if (enemy != null)
+            {
+                // Play player hit damage animation
+                if (enemy.IsWithinAttackingRange(this.player) && this.damageTimer == null)
+                {
+                    this.player.animatePlayerDamage();
+
+                    // Call the reset player damage callback function to reset player damage value
+                    this.damageTimer = this.time.delayedCall(this.timeToResetPlayerDamage * 1000.0, 
+                        this.onResetPlayerDamaged, [], this);
+
+                    this.playerHealth -= 2.0;
+
+                    // Update health bar width to reflect health change
+                    this.healthBarFill.width = 300 * (this.playerHealth / 100.0);
+                }
+                
+                // Move the enemy towards the player
+                enemy.moveToPlayer(this.player, this.sys.game);
+
+                if (this.movingEntityInsideOfFire(enemy))
+                {
+                    enemy.damageSkeleton(1.0, this.enemiesSpawned);
+                }
+            }
+        }
     }
 }

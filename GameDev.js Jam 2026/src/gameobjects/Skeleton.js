@@ -181,7 +181,7 @@ export class Skeleton extends Phaser.Physics.Arcade.Sprite
         return this.isAttacking;
     }
 
-    damageSkeleton(value)
+    damageSkeleton(value, enemiesSpawnedValue)
     {
         this.enemyHealth -= value;
         this.isDamaged = true;
@@ -190,6 +190,7 @@ export class Skeleton extends Phaser.Physics.Arcade.Sprite
 
         if (this.enemyHealth <= 0.0)
         {
+            enemiesSpawnedValue--;
             this.destroy();
         }
     }
