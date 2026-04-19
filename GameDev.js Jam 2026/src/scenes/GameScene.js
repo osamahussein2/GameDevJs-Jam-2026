@@ -63,6 +63,11 @@ export class GameScene extends Phaser.Scene
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
+        this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E); // Interact
 
         this.pKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
@@ -157,27 +162,29 @@ export class GameScene extends Phaser.Scene
                 }
 
                 // Movement input
-                if (this.aKey.isDown)
+                if (this.aKey.isDown || this.leftKey.isDown)
                 {
                     this.player.moveLeft(this.sys.game, this.damageTimer);
                 }
 
-                if (this.dKey.isDown)
+                if (this.dKey.isDown || this.rightKey.isDown)
                 {
                     this.player.moveRight(this.sys.game, this.damageTimer);
                 }
 
-                if (this.wKey.isDown)
+                if (this.wKey.isDown || this.upKey.isDown)
                 {
                     this.player.moveUp(this.sys.game, this.damageTimer);
                 }
 
-                if (this.sKey.isDown)
+                if (this.sKey.isDown|| this.downKey.isDown)
                 {
                     this.player.moveDown(this.sys.game, this.damageTimer);
                 }
 
-                else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp)
+                // Not holding any of the movement keys
+                else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp &&
+                    this.leftKey.isUp && this.rightKey.isUp && this.upKey.isUp && this.downKey.isUp)
                 {
                     this.player.idle();
                 }

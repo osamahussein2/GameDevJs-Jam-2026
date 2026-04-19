@@ -18,12 +18,19 @@ export class ControlsMenu extends Phaser.Scene
         this.gameWidth = this.sys.game.canvas.width;
         this.gameHeight = this.sys.game.canvas.height;
 
-        this.initializeBackButton(this.gameWidth / 2.0, 650);
-    }
+        // Controls Title Text
+        this.controlsTitleText = this.add.text(this.gameWidth / 2.0, 50.0, 
+            'Controls', { fontFamily: 'Arial', fontSize: 50, color: '#FFFFFF' });
 
-    update()
-    {
-        
+        this.controlsTitleText.setOrigin(0.5, 0.5);
+
+        // Controls Text
+        this.controlsText = this.add.text(this.gameWidth / 2.75, this.gameHeight / 2.0, 
+            'WASD/Arrow keys - Move\nE - Heal at vending machine\nP - Pause Game', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
+
+        this.controlsText.setOrigin(0.0, 0.5);
+
+        this.initializeBackButton(this.gameWidth / 2.0, 650);
     }
 
     initializeBackButton(x, y)
