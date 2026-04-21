@@ -317,33 +317,33 @@ export class GameScene extends Phaser.Scene
 
     movingEntityInsideOfFire(entity)
     {
-        if (entity.getWorldPoint().x > this.fire1.getWorldPoint().x - 10.0 &&
-            entity.getWorldPoint().x < this.fire1.getWorldPoint().x + 20.0 &&
-            entity.getWorldPoint().y > this.fire1.getWorldPoint().y - 50.0 &&
+        if (entity.getWorldPoint().x > this.fire1.getWorldPoint().x - 35.0 &&
+            entity.getWorldPoint().x < this.fire1.getWorldPoint().x + 35.0 &&
+            entity.getWorldPoint().y > this.fire1.getWorldPoint().y - 30.0 &&
             entity.getWorldPoint().y < this.fire1.getWorldPoint().y + 50.0)
         {
             return true;
         }
 
-        else if (entity.getWorldPoint().x > this.fire2.getWorldPoint().x - 10.0 &&
-            entity.getWorldPoint().x < this.fire2.getWorldPoint().x + 20.0 &&
-            entity.getWorldPoint().y > this.fire2.getWorldPoint().y - 50.0 &&
+        else if (entity.getWorldPoint().x > this.fire2.getWorldPoint().x - 35.0 &&
+            entity.getWorldPoint().x < this.fire2.getWorldPoint().x + 35.0 &&
+            entity.getWorldPoint().y > this.fire2.getWorldPoint().y - 30.0 &&
             entity.getWorldPoint().y < this.fire2.getWorldPoint().y + 50.0)
         {
             return true;
         }
 
-        else if (entity.getWorldPoint().x > this.fire3.getWorldPoint().x - 10.0 &&
-            entity.getWorldPoint().x < this.fire3.getWorldPoint().x + 20.0 &&
-            entity.getWorldPoint().y > this.fire3.getWorldPoint().y - 50.0 &&
+        else if (entity.getWorldPoint().x > this.fire3.getWorldPoint().x - 35.0 &&
+            entity.getWorldPoint().x < this.fire3.getWorldPoint().x + 35.0 &&
+            entity.getWorldPoint().y > this.fire3.getWorldPoint().y - 30.0 &&
             entity.getWorldPoint().y < this.fire3.getWorldPoint().y + 50.0)
         {
             return true;
         }
 
-        else if (entity.getWorldPoint().x > this.fire4.getWorldPoint().x - 10.0 &&
-            entity.getWorldPoint().x < this.fire4.getWorldPoint().x + 20.0 &&
-            entity.getWorldPoint().y > this.fire4.getWorldPoint().y - 50.0 &&
+        else if (entity.getWorldPoint().x > this.fire4.getWorldPoint().x - 35.0 &&
+            entity.getWorldPoint().x < this.fire4.getWorldPoint().x + 35.0 &&
+            entity.getWorldPoint().y > this.fire4.getWorldPoint().y - 30.0 &&
             entity.getWorldPoint().y < this.fire4.getWorldPoint().y + 50.0)
         {
             return true;
