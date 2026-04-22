@@ -15,28 +15,28 @@ export class Player extends Phaser.Physics.Arcade.Sprite
     {
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('PlayerIdle', {start: 0, end: 6}),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('PlayerIdle', {start: 0, end: 16}),
+            frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'walk',
-            frames: this.anims.generateFrameNumbers('PlayerRun', {start: 0, end: 7}),
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('PlayerRun', {start: 0, end: 6}),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'damaged',
-            frames: this.anims.generateFrameNumbers('PlayerDamaged', {start: 0, end: 3}),
+            frames: this.anims.generateFrameNumbers('PlayerDamaged', {start: 0, end: 2}),
             frameRate: 20,
             repeat: 0
         });
 
         this.anims.create({
             key: 'death',
-            frames: this.anims.generateFrameNumbers('PlayerDeath', {start: 0, end: 3}),
+            frames: this.anims.generateFrameNumbers('PlayerDeath', {start: 0, end: 1}),
             frameRate: 20,
             repeat: 0
         });
@@ -46,7 +46,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.playerX = 0.0;
         this.playerY = 0.0;
 
-        this.playerSpeed = 100.0;
+        this.playerSpeed = 150.0;
 
         this.playerPosX = this.getWorldPoint().x;
         this.playerPosY = this.getWorldPoint().y;
@@ -67,7 +67,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (!this.flipX) this.flipX = true;
-        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
+        if (this.anims.key != 'run' && isDamaged == null) this.anims.play('run', true);
     }
 
     moveRight(game, isDamaged)
@@ -77,7 +77,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
         if (this.flipX) this.flipX = false;
-        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
+        if (this.anims.key != 'run' && isDamaged == null) this.anims.play('run', true);
     }
 
     moveUp(game, isDamaged)
@@ -86,7 +86,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
-        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
+        if (this.anims.key != 'run' && isDamaged == null) this.anims.play('run', true);
     }
 
     moveDown(game, isDamaged)
@@ -95,7 +95,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
-        if (this.anims.key != 'walk' && isDamaged == null) this.anims.play('walk', true);
+        if (this.anims.key != 'run' && isDamaged == null) this.anims.play('run', true);
     }
 
     animatePlayerDamage()

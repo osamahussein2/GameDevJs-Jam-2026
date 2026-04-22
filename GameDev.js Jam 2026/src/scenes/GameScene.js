@@ -19,17 +19,17 @@ export class GameScene extends Phaser.Scene
         this.load.image('HealthVendingMachine', 'art/VendingMachine_Health.png');
 
         // Load player character sprites
-        this.load.spritesheet('PlayerIdle', 'art/Player/IdlePlayerCharacter.png', 
-            { frameWidth: 32, frameHeight: 45 });
+        this.load.spritesheet('PlayerIdle', 'art/player/player_idle.png', 
+            { frameWidth: 47.28, frameHeight: 40 });
         
-        this.load.spritesheet('PlayerRun', 'art/Player/RunPlayerCharacter.png', 
-            { frameWidth: 33, frameHeight: 45 });
+        this.load.spritesheet('PlayerRun', 'art/player/player_run.png', 
+            { frameWidth: 47, frameHeight: 40 });
         
-        this.load.spritesheet('PlayerDamaged', 'art/Player/DamagedPlayerCharacter.png', 
-            { frameWidth: 32, frameHeight: 45 });
+        this.load.spritesheet('PlayerDamaged', 'art/player/player_hurt.png', 
+            { frameWidth: 45, frameHeight: 40 });
         
-        this.load.spritesheet('PlayerDeath', 'art/Player/DeathPlayerCharacter.png', 
-            { frameWidth: 41, frameHeight: 45 });
+        this.load.spritesheet('PlayerDeath', 'art/player/player_death.png', 
+            { frameWidth: 50, frameHeight: 40 });
         
         // Load keyboard input images
         this.load.image('EKeyImage', 'art/KeyImages/EKey.png');
@@ -184,7 +184,8 @@ export class GameScene extends Phaser.Scene
 
                 // Not holding any of the movement keys
                 else if (this.aKey.isUp && this.dKey.isUp && this.wKey.isUp && this.sKey.isUp &&
-                    this.leftKey.isUp && this.rightKey.isUp && this.upKey.isUp && this.downKey.isUp)
+                    this.leftKey.isUp && this.rightKey.isUp && this.upKey.isUp && this.downKey.isUp && 
+                    this.damageTimer == null)
                 {
                     this.player.idle();
                 }
@@ -192,11 +193,11 @@ export class GameScene extends Phaser.Scene
                 // If the player is inside the fire, damage them
                 if (this.movingEntityInsideOfFire(this.player) && this.damageTimer == null)
                 {
-                    this.player.animatePlayerDamage();
-
                     // Call the reset player damage callback function to reset player damage value
                     this.damageTimer = this.time.delayedCall(this.timeToResetPlayerDamage * 1000.0, 
                         this.onResetPlayerDamaged, [], this);
+                    
+                    this.player.animatePlayerDamage();
                     
                     this.playerHealth -= 20.0;
 
