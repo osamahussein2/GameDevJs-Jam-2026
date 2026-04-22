@@ -14,6 +14,8 @@ export class MainMenu extends Phaser.Scene
         this.load.image('creditsButtonNormal', 'art/MMCreditButton.png');
         this.load.image('controlsButtonNormal', 'art/MMControlsButton.png');
         this.load.image('quitButtonNormal', 'art/MMQuitButton.png');
+
+        this.load.audio('mainMenuTheme', 'music/Main Menu Theme.wav');
     }
 
     create() 
@@ -22,6 +24,14 @@ export class MainMenu extends Phaser.Scene
         this.initializeCreditsButton(500, 600);
         this.initializeControlsButton(800, 600);
         this.initializeQuitButton(1100, 600);
+
+        // Play the main menu theme music
+        if (this.mainMenuTheme == null) 
+        {
+            this.mainMenuTheme = this.sound.add('mainMenuTheme');
+            this.mainMenuTheme.play();
+            this.mainMenuTheme.setLoop(true);
+        }
     }
 
     update()
@@ -49,6 +59,15 @@ export class MainMenu extends Phaser.Scene
         this.playButton.on('pointerdown', () => 
         {
             this.scene.stop(this);
+
+            // Stop the main menu theme music and destroy it
+            if (this.mainMenuTheme != null) 
+            {
+                this.mainMenuTheme.stop();
+                this.mainMenuTheme.destroy();
+                this.mainMenuTheme = null;
+            }
+
             this.scene.start('GameScene');
         });
     }
@@ -121,6 +140,14 @@ export class MainMenu extends Phaser.Scene
         this.quitButton.on('pointerdown', () => 
         {
             this.scene.stop(this);
+
+            // Stop the main menu theme music and destroy it
+            if (this.mainMenuTheme != null) 
+            {
+                this.mainMenuTheme.stop();
+                this.mainMenuTheme.destroy();
+                this.mainMenuTheme = null;
+            }
 
             this.game = new Phaser.Game(this);
             this.game.destroy(true, true);
