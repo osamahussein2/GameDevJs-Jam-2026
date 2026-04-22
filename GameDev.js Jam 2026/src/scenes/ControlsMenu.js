@@ -18,6 +18,9 @@ export class ControlsMenu extends Phaser.Scene
         this.gameWidth = this.sys.game.canvas.width;
         this.gameHeight = this.sys.game.canvas.height;
 
+        // Input key for going back to main menu
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
         // Controls Title Text
         this.controlsTitleText = this.add.text(this.gameWidth / 2.0, 50.0, 
             'Controls', { fontFamily: 'Arial', fontSize: 50, color: '#FFFFFF' });
@@ -34,21 +37,32 @@ export class ControlsMenu extends Phaser.Scene
         this.initializeBackButton(this.gameWidth / 2.0, 650);
     }
 
+    update()
+    {
+        // Press ENTER to go back to main menu
+        if (Phaser.Input.Keyboard.JustDown(this.enterKey))
+        {
+            this.scene.stop(this);
+            this.scene.start('MainMenu');
+        }
+    }
+
     initializeBackButton(x, y)
     {
         this.backButton = this.add.nineslice(x, y, 'backButtonNormal');
         this.backButton.setScale(1.0, 1.5);
 
         this.backButton.setInteractive();
+        this.backButton.setTint(0xffff00);
 
         this.backButton.on('pointerover', () => 
         {
-            this.backButton.setTint(0xffff00);
+            //this.backButton.setTint(0xffff00);
         });
 
         this.backButton.on('pointerout', () => 
         {
-            this.backButton.setTint(0xfffffff);
+            //this.backButton.setTint(0xfffffff);
         });
 
         this.backButton.on('pointerdown', () => 

@@ -32,11 +32,34 @@ export class MainMenu extends Phaser.Scene
             this.mainMenuTheme.play();
             this.mainMenuTheme.setLoop(true);
         }
+
+        this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+        this.selectedOption = 0;
+        this.showSelectedOption();
     }
 
     update()
     {
+        if (Phaser.Input.Keyboard.JustDown(this.leftKey) && this.selectedOption > 0)
+        {
+            this.selectedOption--;
+            this.showSelectedOption();
+        }
         
+        if (Phaser.Input.Keyboard.JustDown(this.rightKey) && this.selectedOption < 3)
+        {
+            this.selectedOption++;
+            this.showSelectedOption();
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.enterKey))
+        {
+            this.pressSelectedOption();
+        }
     }
 
     initializePlayButton(x, y)
@@ -48,12 +71,13 @@ export class MainMenu extends Phaser.Scene
 
         this.playButton.on('pointerover', () => 
         {
-            this.playButton.setTint(0xffff00);
+            this.selectedOption = 0;
+            this.showSelectedOption();
         });
 
         this.playButton.on('pointerout', () => 
         {
-            this.playButton.setTint(0xfffffff);
+            //this.playButton.setTint(0xfffffff);
         });
 
         this.playButton.on('pointerdown', () => 
@@ -81,12 +105,13 @@ export class MainMenu extends Phaser.Scene
 
         this.creditsButton.on('pointerover', () => 
         {
-            this.creditsButton.setTint(0xffff00);
+            this.selectedOption = 1;
+            this.showSelectedOption();
         });
 
         this.creditsButton.on('pointerout', () => 
         {
-            this.creditsButton.setTint(0xfffffff);
+            //this.creditsButton.setTint(0xfffffff);
         });
 
         this.creditsButton.on('pointerdown', () => 
@@ -105,12 +130,13 @@ export class MainMenu extends Phaser.Scene
 
         this.controlsButton.on('pointerover', () => 
         {
-            this.controlsButton.setTint(0xffff00);
+            this.selectedOption = 2;
+            this.showSelectedOption();
         });
 
         this.controlsButton.on('pointerout', () => 
         {
-            this.controlsButton.setTint(0xfffffff);
+            //this.controlsButton.setTint(0xfffffff);
         });
 
         this.controlsButton.on('pointerdown', () => 
@@ -129,12 +155,13 @@ export class MainMenu extends Phaser.Scene
 
         this.quitButton.on('pointerover', () => 
         {
-            this.quitButton.setTint(0xffff00);
+            this.selectedOption = 3;
+            this.showSelectedOption();
         });
 
         this.quitButton.on('pointerout', () => 
         {
-            this.quitButton.setTint(0xfffffff);
+            //this.quitButton.setTint(0xfffffff);
         });
 
         this.quitButton.on('pointerdown', () => 
@@ -152,5 +179,98 @@ export class MainMenu extends Phaser.Scene
             this.game = new Phaser.Game(this);
             this.game.destroy(true, true);
         });
+    }
+
+    showSelectedOption()
+    {
+        switch (this.selectedOption)
+        {
+            case 0: // PLAY
+            this.playButton.setTint(0xffff00);
+            this.creditsButton.setTint(0xfffffff);
+            this.controlsButton.setTint(0xfffffff);
+            this.quitButton.setTint(0xfffffff);
+            break;
+
+            case 1: // CREDITS
+            this.playButton.setTint(0xfffffff);
+            this.creditsButton.setTint(0xffff00);
+            this.controlsButton.setTint(0xfffffff);
+            this.quitButton.setTint(0xfffffff);
+            break;
+
+            case 2: // CONTROLS
+            this.playButton.setTint(0xfffffff);
+            this.creditsButton.setTint(0xfffffff);
+            this.controlsButton.setTint(0xffff00);
+            this.quitButton.setTint(0xfffffff);
+            break;
+
+            case 3: // QUIT
+            this.playButton.setTint(0xfffffff);
+            this.creditsButton.setTint(0xfffffff);
+            this.controlsButton.setTint(0xfffffff);
+            this.quitButton.setTint(0xffff00);
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    pressSelectedOption()
+    {
+        switch (this.selectedOption)
+        {
+            case 0: // PLAY
+            
+                this.scene.stop(this);
+
+                // Stop the main menu theme music and destroy it
+                if (this.mainMenuTheme != null) 
+                {
+                    this.mainMenuTheme.stop();
+                    this.mainMenuTheme.destroy();
+                    this.mainMenuTheme = null;
+                }
+
+                this.scene.start('GameScene');
+
+            break;
+
+            case 1: // CREDITS
+            
+                this.scene.stop(this);
+                this.scene.start('CreditsMenu');
+
+            break;
+
+            case 2: // CONTROLS
+
+                this.scene.stop(this);
+                this.scene.start('ControlsMenu');
+
+            break;
+
+            case 3: // QUIT
+
+                this.scene.stop(this);
+
+                // Stop the main menu theme music and destroy it
+                if (this.mainMenuTheme != null) 
+                {
+                    this.mainMenuTheme.stop();
+                    this.mainMenuTheme.destroy();
+                    this.mainMenuTheme = null;
+                }
+
+                this.game = new Phaser.Game(this);
+                this.game.destroy(true, true);
+
+            break;
+
+            default:
+            break;
+        }
     }
 }

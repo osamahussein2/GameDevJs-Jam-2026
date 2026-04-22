@@ -23,6 +23,9 @@ export class CreditsMenu extends Phaser.Scene
 
         // Input key for controlling scroll credits
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        // Input key for going back to main menu
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         
         // Programmer Role Text
         this.programmerRoleText = this.add.text(this.gameWidth / 2.0, this.gameHeight + 100.0, 
@@ -59,8 +62,6 @@ export class CreditsMenu extends Phaser.Scene
             'JaneDukeMusic (https://janedukemusic.com/)', { fontFamily: 'Arial', fontSize: 40, 
             color: '#FFFFFF' }).setInteractive();
         
-        this.janeDukeNamePointerOver = false;
-        
         this.audioNameText.on('pointerover', this.pointerOverJaneDukeName, this);
         this.audioNameText.on('pointerout', this.pointerOutJaneDukeName, this);
         this.audioNameText.on('pointerdown', this.openJaneDukeWebsite, this);
@@ -77,6 +78,8 @@ export class CreditsMenu extends Phaser.Scene
 
         // Credits status icon image (for showing play/pause icon)
         this.creditsStatusIcon = this.add.image(60, 60, 'playIcon');
+
+        this.janeDukeNamePointerOver = false;
     }
 
     update()
@@ -87,7 +90,7 @@ export class CreditsMenu extends Phaser.Scene
 
             if (!this.shouldCreditsScroll) 
             {
-                if (this.pointerOverJaneDukeName) this.audioNameText.setColor('#1A73E8');
+                if (this.janeDukeNamePointerOver) this.audioNameText.setColor('#1A73E8');
                 this.creditsStatusIcon.setTexture('pauseIcon');
             }
             else 
@@ -95,6 +98,13 @@ export class CreditsMenu extends Phaser.Scene
                 if (this.audioNameText.color != '#FFFFFF') this.audioNameText.setColor('#FFFFFF');
                 this.creditsStatusIcon.setTexture('playIcon');
             }
+        }
+
+        // Press ENTER to go back to main menu
+        if (Phaser.Input.Keyboard.JustDown(this.enterKey))
+        {
+            this.scene.stop(this);
+            this.scene.start('MainMenu');
         }
 
         if (this.shouldCreditsScroll)
@@ -159,15 +169,16 @@ export class CreditsMenu extends Phaser.Scene
         this.backButton.setScale(1.0, 1.5);
 
         this.backButton.setInteractive();
+        this.backButton.setTint(0xffff00);
 
         this.backButton.on('pointerover', () => 
         {
-            this.backButton.setTint(0xffff00);
+            //this.backButton.setTint(0xffff00);
         });
 
         this.backButton.on('pointerout', () => 
         {
-            this.backButton.setTint(0xfffffff);
+            //this.backButton.setTint(0xfffffff);
         });
 
         this.backButton.on('pointerdown', () => 
@@ -186,7 +197,7 @@ export class CreditsMenu extends Phaser.Scene
     pointerOutJaneDukeName()
     {
         if (this.audioNameText.color != '#FFFFFF') this.audioNameText.setColor('#FFFFFF');
-        if (this.janeDukeNamePointerOver) this.janeDukeNamePointerOver = false;
+        this.janeDukeNamePointerOver = false;
     }
 
     openJaneDukeWebsite()
