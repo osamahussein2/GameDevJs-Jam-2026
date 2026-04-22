@@ -11,12 +11,18 @@ export class CreditsMenu extends Phaser.Scene
         this.load.setPath('assets');
 
         this.load.image('backButtonNormal', 'art/MM_BackButton.png');
+
+        this.load.image('pauseIcon', 'art/creditsMenu/PauseIcon.png');
+        this.load.image('playIcon', 'art/creditsMenu/PlayIcon.png');
     }
 
     create()
     {
         this.gameWidth = this.sys.game.canvas.width;
         this.gameHeight = this.sys.game.canvas.height;
+
+        // Input key for controlling scroll credits
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
         // Programmer Role Text
         this.programmerRoleText = this.add.text(this.gameWidth / 2.0, this.gameHeight + 100.0, 
@@ -42,35 +48,84 @@ export class CreditsMenu extends Phaser.Scene
 
         this.artistNameText.setOrigin(0.5, 0.5);
 
+        // Music/Sound Composer Role Text
+        this.audioRoleText = this.add.text(this.gameWidth / 2.0, this.gameHeight + 700.0, 
+            'Music/Sound Composer', { fontFamily: 'Arial', fontSize: 60, color: '#FFFFFF' });
+
+        this.audioRoleText.setOrigin(0.5, 0.5);
+
+        // Music/Sound Composer Name Text
+        this.audioNameText = this.add.text(this.gameWidth / 2.0, this.gameHeight + 800.0, 
+            'JaneDukeMusic (https://janedukemusic.com/)', { fontFamily: 'Arial', fontSize: 40, 
+            color: '#FFFFFF' }).setInteractive();
+        
+        this.janeDukeNamePointerOver = false;
+        
+        this.audioNameText.on('pointerover', this.pointerOverJaneDukeName, this);
+        this.audioNameText.on('pointerout', this.pointerOutJaneDukeName, this);
+        this.audioNameText.on('pointerdown', this.openJaneDukeWebsite, this);
+
+        this.audioNameText.setOrigin(0.5, 0.5);
+
         // Scroll credits parameters
         this.scrollCreditsAnimation = 0.0;
         this.scrollCreditsSpeed = 5.0;
 
         this.initializeBackButton(this.gameWidth / 2.0, 650);
+
+        this.shouldCreditsScroll = true;
+
+        // Credits status icon image (for showing play/pause icon)
+        this.creditsStatusIcon = this.add.image(60, 60, 'playIcon');
     }
 
     update()
     {
-        // Update scroll credits animation
-        this.scrollCreditsAnimation -= this.sys.game.loop.delta / (1000.0 * this.scrollCreditsSpeed);
-
-        // Update all credits texts positions using scroll credits animation value
-        this.programmerRoleText.setPosition(this.programmerRoleText.getWorldPoint().x, 
-            this.programmerRoleText.getWorldPoint().y + this.scrollCreditsAnimation);
-        
-        this.programmerNameText.setPosition(this.programmerNameText.getWorldPoint().x, 
-            this.programmerNameText.getWorldPoint().y + this.scrollCreditsAnimation);
-        
-        this.artistRoleText.setPosition(this.artistRoleText.getWorldPoint().x, 
-            this.artistRoleText.getWorldPoint().y + this.scrollCreditsAnimation);
-        
-        this.artistNameText.setPosition(this.artistNameText.getWorldPoint().x, 
-            this.artistNameText.getWorldPoint().y + this.scrollCreditsAnimation);
-        
-        // Check if all the credits texts went above the screen (value should be less than 0)
-        if (this.allCreditsTextsWentAboveTheScreen(-300.0))
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey))
         {
-            this.resetCreditsScrolling(); // Reset all credits texts positions back to their starting positions
+            this.shouldCreditsScroll = !this.shouldCreditsScroll;
+
+            if (!this.shouldCreditsScroll) 
+            {
+                if (this.pointerOverJaneDukeName) this.audioNameText.setColor('#1A73E8');
+                this.creditsStatusIcon.setTexture('pauseIcon');
+            }
+            else 
+            {
+                if (this.audioNameText.color != '#FFFFFF') this.audioNameText.setColor('#FFFFFF');
+                this.creditsStatusIcon.setTexture('playIcon');
+            }
+        }
+
+        if (this.shouldCreditsScroll)
+        {
+            // Update scroll credits animation
+            this.scrollCreditsAnimation -= this.sys.game.loop.delta / (1000.0 * this.scrollCreditsSpeed);
+
+            // Update all credits texts positions using scroll credits animation value
+            this.programmerRoleText.setPosition(this.programmerRoleText.getWorldPoint().x, 
+                this.programmerRoleText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            this.programmerNameText.setPosition(this.programmerNameText.getWorldPoint().x, 
+                this.programmerNameText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            this.artistRoleText.setPosition(this.artistRoleText.getWorldPoint().x, 
+                this.artistRoleText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            this.artistNameText.setPosition(this.artistNameText.getWorldPoint().x, 
+                this.artistNameText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            this.audioRoleText.setPosition(this.audioRoleText.getWorldPoint().x, 
+                this.audioRoleText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            this.audioNameText.setPosition(this.audioNameText.getWorldPoint().x, 
+                this.audioNameText.getWorldPoint().y + this.scrollCreditsAnimation);
+            
+            // Check if all the credits texts went above the screen (value should be less than 0)
+            if (this.allCreditsTextsWentAboveTheScreen(-300.0))
+            {
+                this.resetCreditsScrolling(); // Reset all credits texts positions back to their starting positions
+            }
         }
 
         // Only printing this below for testing of the text position updating working
@@ -83,6 +138,8 @@ export class CreditsMenu extends Phaser.Scene
         this.programmerNameText.setPosition(this.gameWidth / 2.0, this.gameHeight + 200.0);
         this.artistRoleText.setPosition(this.gameWidth / 2.0, this.gameHeight + 400.0);
         this.artistNameText.setPosition(this.gameWidth / 2.0, this.gameHeight + 500.0);
+        this.audioRoleText.setPosition(this.gameWidth / 2.0, this.gameHeight + 700.0);
+        this.audioNameText.setPosition(this.gameWidth / 2.0, this.gameHeight + 800.0);
         this.scrollCreditsAnimation = 0.0;
     }
 
@@ -91,7 +148,9 @@ export class CreditsMenu extends Phaser.Scene
         return this.programmerRoleText.getWorldPoint().y <= y && 
             this.programmerNameText.getWorldPoint().y <= y &&
             this.artistRoleText.getWorldPoint().y <= y &&
-            this.artistNameText.getWorldPoint().y <= y;
+            this.artistNameText.getWorldPoint().y <= y && 
+            this.audioRoleText.getWorldPoint().y <= y &&
+            this.audioNameText.getWorldPoint().y <= y;
     }
 
     initializeBackButton(x, y)
@@ -116,5 +175,29 @@ export class CreditsMenu extends Phaser.Scene
             this.scene.stop(this);
             this.scene.start('MainMenu');
         });
+    }
+
+    pointerOverJaneDukeName()
+    {
+        this.janeDukeNamePointerOver = true;
+        if (!this.shouldCreditsScroll) this.audioNameText.setColor('#1A73E8');
+    }
+
+    pointerOutJaneDukeName()
+    {
+        if (this.audioNameText.color != '#FFFFFF') this.audioNameText.setColor('#FFFFFF');
+        if (this.janeDukeNamePointerOver) this.janeDukeNamePointerOver = false;
+    }
+
+    openJaneDukeWebsite()
+    {
+        if (!this.shouldCreditsScroll)
+        {
+            this.description = 'Official Artist Website';
+
+            this.janeDukeURL = `https://janedukemusic.com/?text=${encodeURIComponent(this.description)}`;
+
+            this.janeDukeWebsite = window.open(this.janeDukeURL);
+        }
     }
 }

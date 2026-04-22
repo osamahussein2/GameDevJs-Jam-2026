@@ -26,7 +26,8 @@ export class ControlsMenu extends Phaser.Scene
 
         // Controls Text
         this.controlsText = this.add.text(this.gameWidth / 2.75, this.gameHeight / 2.0, 
-            'WASD/Arrow keys - Move\nE - Heal at vending machine\nP - Pause Game', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
+            'WASD/Arrow keys - Move\nE - Heal at vending machine\nP - Pause Game' + 
+            '\nSPACE - Play/Pause Credits Scroll', { fontFamily: 'Arial', fontSize: 30, color: '#FFFFFF' });
 
         this.controlsText.setOrigin(0.0, 0.5);
 
