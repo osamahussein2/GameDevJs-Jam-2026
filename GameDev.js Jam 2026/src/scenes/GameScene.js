@@ -50,6 +50,8 @@ export class GameScene extends Phaser.Scene
         // Load fire animation
         this.load.spritesheet('Fire', 'art/fire_animation.png', 
             { frameWidth: 32, frameHeight: 20 });
+        
+        this.load.audio('gameplayMusic', 'music/Gameplay Music.wav');
     }
 
     create()
@@ -122,6 +124,14 @@ export class GameScene extends Phaser.Scene
         this.vendingMachineCooldownTime = 30.0;
 
         this.vendingMachineTimer = this.vendingMachineCooldownTime;
+
+        // Play the gameplay music
+        if (this.gameplayMusic == null) 
+        {
+            this.gameplayMusic = this.sound.add('gameplayMusic');
+            this.gameplayMusic.play();
+            this.gameplayMusic.setLoop(true);
+        }
     }
 
     update()
@@ -213,6 +223,15 @@ export class GameScene extends Phaser.Scene
                 if (this.enterKey.isDown) // Press ENTER to go to main menu
                 {
                     this.scene.stop(this);
+
+                    // Stop the gameplay music and destroy it
+                    if (this.gameplayMusic != null) 
+                    {
+                        this.gameplayMusic.stop();
+                        this.gameplayMusic.destroy();
+                        this.gameplayMusic = null;
+                    }
+
                     this.scene.start('MainMenu');
                 }
 
@@ -380,6 +399,15 @@ export class GameScene extends Phaser.Scene
         if (this.enemies.length > 0) this.enemies.pop();
 
         this.scene.stop(this);
+
+        // Stop the gameplay music and destroy it
+        if (this.gameplayMusic != null) 
+        {
+            this.gameplayMusic.stop();
+            this.gameplayMusic.destroy();
+            this.gameplayMusic = null;
+        }
+
         this.scene.start('GameOverMenu', { score: this.score });
     }
 

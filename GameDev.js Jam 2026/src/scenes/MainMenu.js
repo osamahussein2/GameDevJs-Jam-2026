@@ -15,7 +15,7 @@ export class MainMenu extends Phaser.Scene
         this.load.image('controlsButtonNormal', 'art/MMControlsButton.png');
         this.load.image('quitButtonNormal', 'art/MMQuitButton.png');
 
-        this.load.audio('mainMenuTheme', 'music/Main Menu Theme.wav');
+        this.load.audio('mainMenuTheme', 'music/Main Menu Music (Remixed).wav');
     }
 
     create() 
