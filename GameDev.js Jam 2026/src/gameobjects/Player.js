@@ -51,18 +51,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite
         this.playerPosX = this.getWorldPoint().x;
         this.playerPosY = this.getWorldPoint().y;
 
-        this.minLeftPoint = 30.0;
-        this.maxRightPoint = 1170.0;
+        this.minXPoint = 60.0;
+        this.maxXPoint = 1225.0;
 
         this.minYPoint = 50.0;
-        this.maxYPoint = 650.0;
+        this.maxYPoint = 640.0;
 
         this.isDead = false;
     }
 
     moveLeft(game, isDamaged)
     {
-        if (this.getWorldPoint().x > this.minLeftPoint) this.playerX -= this.playerSpeed * (game.loop.delta / 1000.0);
+        if (this.getWorldPoint().x > this.minXPoint) this.playerX -= this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
@@ -72,7 +72,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
     moveRight(game, isDamaged)
     {
-        if (this.getWorldPoint().x < 1170.0) this.playerX += this.playerSpeed * (game.loop.delta / 1000.0);
+        if (this.getWorldPoint().x < this.maxXPoint) this.playerX += this.playerSpeed * (game.loop.delta / 1000.0);
 
         this.setPosition(this.playerPosX + this.playerX, this.playerPosY + this.playerY);
 
@@ -111,8 +111,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
     preventPlayerFromMovingOffscreen()
     {
-        if (this.getWorldPoint().x < this.minLeftPoint) this.setPosition(this.minLeftPoint, this.getWorldPoint().y);
-        else if (this.getWorldPoint().x > this.minRightPoint) this.setPosition(this.minRightPoint, this.getWorldPoint().y);
+        if (this.getWorldPoint().x < this.minXPoint) this.setPosition(this.minXPoint, this.getWorldPoint().y);
+        else if (this.getWorldPoint().x > this.maxXPoint) this.setPosition(this.maxXPoint, this.getWorldPoint().y);
         
         else if (this.getWorldPoint().y < this.minYPoint) this.setPosition(this.getWorldPoint().x, this.minYPoint);
         else if (this.getWorldPoint().y > this.maxYPoint) this.setPosition(this.getWorldPoint().x, this.maxYPoint);
