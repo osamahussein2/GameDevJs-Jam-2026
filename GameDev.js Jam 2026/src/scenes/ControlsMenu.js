@@ -34,11 +34,24 @@ export class ControlsMenu extends Phaser.Scene
 
         this.controlsText.setOrigin(0.0, 0.5);
 
+        this.buttonScaleX = 0.8;
+        this.buttonScaleY = 1.0;
+
+        this.startingButtonScaleX = this.buttonScaleX;
+        this.startingButtonScaleY = this.buttonScaleY;
+
+        this.minButtonScaleX = 0.8;
+        this.maxButtonScaleX = 1.1;
+
+        this.buttonScaleDecreasing = false;
+
         this.initializeBackButton(this.gameWidth / 2.0, 650);
     }
 
     update()
     {
+        this.updateScaleOfBackButton();
+
         // Press ENTER to go back to main menu
         if (Phaser.Input.Keyboard.JustDown(this.enterKey))
         {
@@ -50,7 +63,7 @@ export class ControlsMenu extends Phaser.Scene
     initializeBackButton(x, y)
     {
         this.backButton = this.add.nineslice(x, y, 'backButtonNormal');
-        this.backButton.setScale(1.0, 1.5);
+        this.backButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.backButton.setInteractive();
         this.backButton.setTint(0xffff00);
@@ -70,5 +83,26 @@ export class ControlsMenu extends Phaser.Scene
             this.scene.stop(this);
             this.scene.start('MainMenu');
         });
+    }
+
+    updateScaleOfBackButton()
+    {
+        if (!this.buttonScaleDecreasing)
+        {
+            this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+            this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+            if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+        }
+
+        else
+        {
+            this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+            this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+            if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+        }
+        
+        this.backButton.setScale(this.buttonScaleX, this.buttonScaleY);
     }
 }

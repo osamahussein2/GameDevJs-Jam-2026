@@ -72,6 +72,17 @@ export class CreditsMenu extends Phaser.Scene
         this.scrollCreditsAnimation = 0.0;
         this.scrollCreditsSpeed = 5.0;
 
+        this.buttonScaleX = 0.8;
+        this.buttonScaleY = 1.0;
+
+        this.startingButtonScaleX = this.buttonScaleX;
+        this.startingButtonScaleY = this.buttonScaleY;
+
+        this.minButtonScaleX = 0.8;
+        this.maxButtonScaleX = 1.1;
+
+        this.buttonScaleDecreasing = false;
+
         this.initializeBackButton(this.gameWidth / 2.0, 650);
 
         this.shouldCreditsScroll = true;
@@ -84,6 +95,8 @@ export class CreditsMenu extends Phaser.Scene
 
     update()
     {
+        this.updateScaleOfBackButton();
+        
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey))
         {
             this.shouldCreditsScroll = !this.shouldCreditsScroll;
@@ -166,7 +179,7 @@ export class CreditsMenu extends Phaser.Scene
     initializeBackButton(x, y)
     {
         this.backButton = this.add.nineslice(x, y, 'backButtonNormal');
-        this.backButton.setScale(1.0, 1.5);
+        this.backButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.backButton.setInteractive();
         this.backButton.setTint(0xffff00);
@@ -186,6 +199,27 @@ export class CreditsMenu extends Phaser.Scene
             this.scene.stop(this);
             this.scene.start('MainMenu');
         });
+    }
+
+    updateScaleOfBackButton()
+    {
+        if (!this.buttonScaleDecreasing)
+        {
+            this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+            this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+            if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+        }
+
+        else
+        {
+            this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+            this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+            if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+        }
+        
+        this.backButton.setScale(this.buttonScaleX, this.buttonScaleY);
     }
 
     pointerOverJaneDukeName()
