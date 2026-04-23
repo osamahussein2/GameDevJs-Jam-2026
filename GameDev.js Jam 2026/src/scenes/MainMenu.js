@@ -38,8 +38,19 @@ export class MainMenu extends Phaser.Scene
 
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
+        this.buttonScaleX = 0.8;
+        this.buttonScaleY = 1.0;
+
+        this.startingButtonScaleX = this.buttonScaleX;
+        this.startingButtonScaleY = this.buttonScaleY;
+
         this.selectedOption = 0;
         this.showSelectedOption();
+
+        this.minButtonScaleX = 0.8;
+        this.maxButtonScaleX = 1.1;
+
+        this.buttonScaleDecreasing = false;
     }
 
     update()
@@ -60,12 +71,14 @@ export class MainMenu extends Phaser.Scene
         {
             this.pressSelectedOption();
         }
+
+        this.updateScaleOfSelectedOption();
     }
 
     initializePlayButton(x, y)
     {
         this.playButton = this.add.nineslice(x, y, 'playButtonNormal');
-        this.playButton.setScale(1.0, 1.5);
+        this.playButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.playButton.setInteractive();
 
@@ -99,7 +112,7 @@ export class MainMenu extends Phaser.Scene
     initializeCreditsButton(x, y)
     {
         this.creditsButton = this.add.nineslice(x, y, 'creditsButtonNormal');
-        this.creditsButton.setScale(1.0, 1.5);
+        this.creditsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.creditsButton.setInteractive();
 
@@ -124,7 +137,7 @@ export class MainMenu extends Phaser.Scene
     initializeControlsButton(x, y)
     {
         this.controlsButton = this.add.nineslice(x, y, 'controlsButtonNormal');
-        this.controlsButton.setScale(1.0, 1.5);
+        this.controlsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.controlsButton.setInteractive();
 
@@ -149,7 +162,7 @@ export class MainMenu extends Phaser.Scene
     initializeQuitButton(x, y)
     {
         this.quitButton = this.add.nineslice(x, y, 'quitButtonNormal');
-        this.quitButton.setScale(1.0, 1.5);
+        this.quitButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
 
         this.quitButton.setInteractive();
 
@@ -190,6 +203,16 @@ export class MainMenu extends Phaser.Scene
             this.creditsButton.setTint(0xfffffff);
             this.controlsButton.setTint(0xfffffff);
             this.quitButton.setTint(0xfffffff);
+
+            if (this.buttonScaleX != this.startingButtonScaleX) this.buttonScaleX = this.startingButtonScaleX;
+            if (this.buttonScaleY != this.startingButtonScaleY) this.buttonScaleY = this.startingButtonScaleY;
+
+            if (this.buttonScaleDecreasing) this.buttonScaleDecreasing = false;
+
+            this.playButton.setScale(this.buttonScaleX, this.buttonScaleY);
+            this.creditsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.controlsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.quitButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
             break;
 
             case 1: // CREDITS
@@ -197,6 +220,16 @@ export class MainMenu extends Phaser.Scene
             this.creditsButton.setTint(0xffff00);
             this.controlsButton.setTint(0xfffffff);
             this.quitButton.setTint(0xfffffff);
+
+            if (this.buttonScaleX != this.startingButtonScaleX) this.buttonScaleX = this.startingButtonScaleX;
+            if (this.buttonScaleY != this.startingButtonScaleY) this.buttonScaleY = this.startingButtonScaleY;
+
+            if (this.buttonScaleDecreasing) this.buttonScaleDecreasing = false;
+
+            this.playButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.creditsButton.setScale(this.buttonScaleX, this.buttonScaleY);
+            this.controlsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.quitButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
             break;
 
             case 2: // CONTROLS
@@ -204,6 +237,16 @@ export class MainMenu extends Phaser.Scene
             this.creditsButton.setTint(0xfffffff);
             this.controlsButton.setTint(0xffff00);
             this.quitButton.setTint(0xfffffff);
+
+            if (this.buttonScaleX != this.startingButtonScaleX) this.buttonScaleX = this.startingButtonScaleX;
+            if (this.buttonScaleY != this.startingButtonScaleY) this.buttonScaleY = this.startingButtonScaleY;
+
+            if (this.buttonScaleDecreasing) this.buttonScaleDecreasing = false;
+
+            this.playButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.creditsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.controlsButton.setScale(this.buttonScaleX, this.buttonScaleY);
+            this.quitButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
             break;
 
             case 3: // QUIT
@@ -211,6 +254,16 @@ export class MainMenu extends Phaser.Scene
             this.creditsButton.setTint(0xfffffff);
             this.controlsButton.setTint(0xfffffff);
             this.quitButton.setTint(0xffff00);
+
+            if (this.buttonScaleX != this.startingButtonScaleX) this.buttonScaleX = this.startingButtonScaleX;
+            if (this.buttonScaleY != this.startingButtonScaleY) this.buttonScaleY = this.startingButtonScaleY;
+
+            if (this.buttonScaleDecreasing) this.buttonScaleDecreasing = false;
+
+            this.playButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.creditsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.controlsButton.setScale(this.startingButtonScaleX, this.startingButtonScaleY);
+            this.quitButton.setScale(this.buttonScaleX, this.buttonScaleY);
             break;
 
             default:
@@ -266,6 +319,103 @@ export class MainMenu extends Phaser.Scene
 
                 this.game = new Phaser.Game(this);
                 this.game.destroy(true, true);
+
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    updateScaleOfSelectedOption()
+    {
+        switch (this.selectedOption)
+        {
+            case 0: // PLAY
+
+                if (!this.buttonScaleDecreasing)
+                {
+                    this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+                }
+
+                else
+                {
+                    this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+                }
+                
+                this.playButton.setScale(this.buttonScaleX, this.buttonScaleY);
+
+            break;
+
+            case 1: // CREDITS
+            
+                if (!this.buttonScaleDecreasing)
+                {
+                    this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+                }
+
+                else
+                {
+                    this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+                }
+                
+                this.creditsButton.setScale(this.buttonScaleX, this.buttonScaleY);
+
+            break;
+
+            case 2: // CONTROLS
+
+                if (!this.buttonScaleDecreasing)
+                {
+                    this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+                }
+
+                else
+                {
+                    this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+                }
+                
+                this.controlsButton.setScale(this.buttonScaleX, this.buttonScaleY);
+
+            break;
+
+            case 3: // QUIT
+
+                if (!this.buttonScaleDecreasing)
+                {
+                    this.buttonScaleX += this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY += this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX >= this.maxButtonScaleX) this.buttonScaleDecreasing = true;
+                }
+
+                else
+                {
+                    this.buttonScaleX -= this.sys.game.loop.delta / 1000.0;
+                    this.buttonScaleY -= this.sys.game.loop.delta / 1000.0;
+
+                    if (this.buttonScaleX <= this.minButtonScaleX) this.buttonScaleDecreasing = false;
+                }
+                
+                this.quitButton.setScale(this.buttonScaleX, this.buttonScaleY);
 
             break;
 
