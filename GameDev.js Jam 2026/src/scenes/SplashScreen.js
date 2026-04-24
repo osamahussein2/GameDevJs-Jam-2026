@@ -48,7 +48,7 @@ export class SplashScreen extends Phaser.Scene
             
             if (this.phaserImage.alpha >= 1.0 && this.sceneTimer == null)
             {
-                console.log('Phaser Image is fully visible');
+                //console.log('Phaser Image is fully visible');
 
                 // Call the on start image fade callback function once the image fully pops up
                 this.sceneTimer = this.time.delayedCall(this.timeToFadeImage * this.millisecondsToSeconds, 

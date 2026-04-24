@@ -25,8 +25,14 @@ export class MainMenu extends Phaser.Scene
         this.initializeControlsButton(800, 600);
         this.initializeQuitButton(1100, 600);
 
+        // Game Title Text
+        this.gameTitleText = this.add.text(this.sys.game.canvas.width / 2.0, 50.0, 
+            'Skeleton Lure', { fontFamily: 'Garamond', fontSize: 50, color: '#FFFFFF' });
+
+        this.gameTitleText.setOrigin(0.5, 0.5);
+
         // Play the main menu theme music
-        if (this.mainMenuTheme == null) 
+        if (this.mainMenuTheme == null)
         {
             this.mainMenuTheme = this.sound.add('mainMenuTheme');
             this.mainMenuTheme.play();
